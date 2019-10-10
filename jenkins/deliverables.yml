@@ -1,0 +1,128 @@
+- job:
+    name: skydive-create-deliverables
+    project-type: multijob
+    defaults: skydive
+    parameters:
+      - skydive-parameters:
+          name: skydive
+          repository: https://github.com/skydive-project/skydive
+          ref: ""
+          refspec: "+refs/tags/*:refs/remotes/origin/tags/*"
+          dry-run: ""
+          keep-resources: ""
+    scm:
+      - skydive-github:
+          name: skydive
+          repository: "https://github.com/skydive-project/skydive"
+          ref: ""
+          refspec: "+refs/tags/*:refs/remotes/origin/tags/*"
+    triggers:
+      - skydive-github-trigger
+    builders:
+      - multijob:
+          name: skydive-create-deliverables
+          condition: SUCCESSFUL
+          projects:
+            - name: skydive-create-docker-image
+              current-parameters: true
+              git-revision: true
+            - name: skydive-flow-exporter-create-docker-image
+              current-parameters: true
+              git-revision: true
+            - name: skydive-build-copr
+              current-parameters: true
+              git-revision: true
+            - name: skydive-create-vagrant-boxes
+              current-parameters: true
+              git-revision: true
+      - multijob:
+          name: skydive-create-release
+          condition: SUCCESSFUL
+          projects:
+            - name: skydive-release
+              current-parameters: true
+              git-revision: true
+
+- job:
+    name: skydive-create-deliverables-trunk
+    project-type: multijob
+    defaults: skydive
+    parameters:
+      - skydive-parameters:
+          name: skydive
+          repository: https://github.com/skydive-project/skydive
+          ref: "refs/heads/master"
+          refspec: "+refs/heads/*:refs/remotes/origin/*"
+          dry-run: ""
+          keep-resources: ""
+    scm:
+      - skydive-github:
+          name: skydive
+          repository: "https://github.com/skydive-project/skydive"
+          ref: "refs/heads/master"
+          refspec: "+refs/heads/*:refs/remotes/origin/*"
+      - skydive-ci-github
+    triggers:
+      - timed: "@midnight"
+    builders:
+      - multijob:
+          name: skydive-create-deliverables
+          condition: SUCCESSFUL
+          projects:
+            - name: skydive-create-binaries
+              current-parameters: true
+            - name: skydive-create-docker-image
+              current-parameters: true
+              git-revision: true
+            - name: skydive-flow-exporter-create-docker-image
+            - name: skydive-create-vagrant-boxes
+              current-parameters: true
+              git-revision: true
+    publishers:
+      - skydive-publishers
+      - email:
+          recipients: skydivesoftware@gmail.com
+
+- job:
+    name: skydive-create-binaries
+    defaults: skydive
+    triggers:
+      - skydive-pull-request:
+          name: create-binaries
+          trigger-prefix: "deliverable "
+          only-trigger-phrase: true
+          cancel-builds-on-update: true
+    wrappers:
+      - github-credentials
+      - docker-credentials
+      - skydive-wrappers
+    scm:
+      - skydive-github:
+          name: skydive
+          repository: "https://github.com/skydive-project/skydive"
+          ref: "refs/heads/master"
+          refspec: "+refs/heads/*:refs/remotes/origin/*"
+      - skydive-github:
+          name: skydive-flow-exporter
+          repository: "https://github.com/skydive-project/skydive-flow-exporter"
+          ref: "refs/heads/master"
+          refspec: "+refs/heads/*:refs/remotes/origin/*"
+    builders:
+      - golang-shell:
+          module: github.com/skydive-project/skydive
+          test: |
+            echo "--- BINARIES ---"
+            make LDFLAGS="-s -w" static WITH_EBPF=true
+            make swagger
+      - golang-shell:
+          module: github.com/skydive-project/skydive-flow-exporter
+          test: |
+            make
+      - upload-binaries:
+          add: |
+            add_gz skydive-latest $WORKSPACE/bin/skydive
+            add swagger.json $WORKSPACE/src/github.com/skydive-project/skydive/swagger.json
+
+            allinone=$WORKSPACE/src/github.com/skydive-project/skydive-flow-exporter/allinone
+            add_gz skydive-flow-exporter $allinone/allinone
+            add skydive-flow-exporter.yml $allinone/allinone.yml.default

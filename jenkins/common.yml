@@ -1,0 +1,306 @@
+- scm:
+    name: skydive-github
+    scm:
+      - git:
+          url: "{repository}"
+          browser: githubweb
+          browser-url: "{repository}"
+          timeout: 20
+          basedir: "src/github.com/skydive-project/{name}"
+          per-build-tag: false
+          skip-tag: true
+          refspec: "{refspec}"
+          branches:
+            - "{ref}"
+
+- trigger:
+    name: skydive-pull-request
+    triggers:
+      - github-pull-request:
+          org-list:
+            - skydive-project
+          github-hooks: true
+          allow-whitelist-orgs-as-admins: false
+          trigger-phrase: '.*(re)?run ({trigger-prefix}tests|(skydive-)?{name}).*'
+          skip-build-phrase: '.*skip (skydive-)?{name}.*'
+          cancel-builds-on-update: "{cancel-builds-on-update}"
+          only-trigger-phrase: "{only-trigger-phrase}"
+          status-context: "skydive-{name}"
+          black-list-labels:
+            - no-ci
+          white-list: []
+
+- publisher:
+    name: publish-cobertura
+    publishers:
+      - cobertura:
+          report-file: "cover.out.xml"
+          targets:
+            - packages:
+                healthy: 7000000
+                unhealthy: 5000000
+                failing: 3000000
+            - files:
+                healthy: 7000000
+                unhealthy: 5000000
+                failing: 3000000
+            - classes:
+                healthy: 7000000
+                unhealthy: 5000000
+                failing: 3000000
+            - method:
+                healthy: 7000000
+                unhealthy: 5000000
+                failing: 3000000
+
+- wrapper:
+    name: github-credentials
+    wrappers:
+      - credentials-binding:
+          - text:
+              credential-id: github-token
+              variable: GITHUB_TOKEN
+          - text:
+              credential-id: github-username
+              variable: GITHUB_USERNAME
+
+- wrapper:
+    name: docker-credentials
+    wrappers:
+      - credentials-binding:
+          - text:
+              credential-id: docker-password
+              variable: DOCKER_PASSWORD
+
+- wrapper:
+    name: copr-credentials
+    wrappers:
+      - credentials-binding:
+          - text:
+              credential-id: copr-login
+              variable: COPR_LOGIN
+          - text:
+              credential-id: copr-token
+              variable: COPR_TOKEN
+
+- wrapper:
+    name: quay-credentials
+    wrappers:
+      - credentials-binding:
+          - text:
+              credential-id: quay-login
+              variable: QUAY_LOGIN
+          - text:
+              credential-id: quay-token
+              variable: QUAY_TOKEN
+
+- wrapper:
+    name: coverage-credentials
+    wrappers:
+      - credentials-binding:
+          - text:
+              credential-id: codecov-token
+              variable: CODECOV_TOKEN
+          - text:
+              credential-id: coveralls-token
+              variable: COVERALLS_TOKEN
+
+- wrapper:
+    name: skydive-wrappers
+    wrappers:
+      - ansicolor:
+          colormap: gnome-terminal
+      - timeout:
+          timeout: 300
+          fail: true
+          type: absolute
+      - timestamps
+      - github-pull-request:
+          status-url: http://ci-logs.skydive.network/logs/${JOB_NAME}/${BUILD_NUMBER}
+          status-context: ${JOB_NAME}
+
+- publisher:
+    name: skydive-publishers
+    publishers:
+      - chuck-norris
+      - slack:
+          team-domain: skydive-project
+          auth-token-credential-id: slack-token
+          room: #ci-cd
+          notify-success: true
+          notify-every-failure: true
+
+- builder:
+    name: skydive-cleanup
+    builders:
+      - shell: |
+          #!/bin/bash
+          cd src/github.com/skydive-project/skydive
+          [ -d /var/tmp/skydive-cleanup ] || sudo scripts/ci/cleanup.sh init
+          sudo scripts/ci/cleanup.sh snapshot
+          sudo scripts/ci/cleanup.sh cleanup
+
+- builder:
+    name: golang-shell
+    builders:
+      - shell: |
+          set -v
+
+          #!/bin/bash
+          cd src/{module}
+
+          # Set Environment
+          echo $PATH | grep -q "$HOME/bin" || export PATH="$PATH:$HOME/bin"
+
+          # Install Go
+          mkdir -p ~/bin
+          curl -sL -o ~/bin/gimme https://raw.githubusercontent.com/travis-ci/gimme/master/gimme
+          chmod +x ~/bin/gimme
+
+          # before changing this be sure that it will not break the RHEL packaging
+          eval "$(gimme 1.11.13)"
+
+          export GO111MODULE=on
+          export GOPATH=$WORKSPACE
+          export PATH=$PATH:$GOPATH/bin
+
+          # share compile cache
+          mkdir -p $HOME/pkg
+          rm -rf $GOPATH/pkg
+          ln -s $HOME/pkg $GOPATH/pkg
+
+          {test}
+
+- builder:
+    name: skydive-test
+    builders:
+      - golang-shell:
+          module: github.com/skydive-project/skydive
+          test: |
+            [[ "$ghprbCommentBody" = *"insanelock"* ]] && export TAGS=mutexdebug
+            [[ "$ghprbCommentBody" = *"profile"* ]] && export WITH_PROF=true
+            [[ "$ghprbPullLongDescription" = *"pattern="* ]] && export TEST_PATTERN=`expr match "$ghprbPullLongDescription" '^.*pattern=\(.*\)$'`
+            [[ "$ghprbCommentBody" = *"pattern="* ]] && export TEST_PATTERN=`expr match "$ghprbCommentBody" '^.*pattern=\(.*\)$'`
+            {test}
+
+- parameter:
+    name: skydive-parameters
+    parameters:
+      - string:
+          name: NAME
+          default: "{name}"
+          description: "The name of the repository"
+      - string:
+          name: REPOSITORY
+          default: "{repository}"
+          description: URL of the Git repository to use
+      - string:
+          name: REF
+          default: "{ref}"
+          description: "The tag or branch to build (ex: origin/pr/1234/merge for the PR 1234, v0.20.1 for the corresponding tag or devel for the branch named devel)"
+      - string:
+          name: REFSPEC
+          default: "{refspec}"
+          description: "Refspec (ex: +refs/pull/*:refs/remotes/origin/pr/* for a PR, +refs/tags/*:refs/remotes/origin/tags/* for a tag, +refs/heads/*:refs/remotes/origin/* for a branch)"
+      - string:
+          name: DRY_RUN
+          default: "{dry-run}"
+          description: If specified, do not upload anything
+      - string:
+          name: KEEP_RESOURCES
+          default: "{keep-resources}"
+          description: Keep resources at the end of the test
+
+- parameter:
+    name: skydive-labels
+    parameters:
+      - label:
+          name: SLAVE_NAME
+          default: "{slave-name}"
+          description: "The node on which to run the job"
+
+- builder:
+    name: skydive-create-docker-image
+    builders:
+      - golang-shell:
+          module: "{module}"
+          test: |
+            . $GOPATH/src/github.com/skydive-project/skydive-ci/scripts/create-docker-image.sh
+
+            export DOCKER_IMAGE="{image}"
+            export DOCKER_IMAGE_SNAPSHOT="{image-snapshot}"
+            export DOCKER_BINARY="{binary}"
+            export DOCKERFILE="{dockerfile}"
+            export DOCKER_BUILD_COMMAND="{build-command}"
+
+            [ -n "$SKIP_BUILD" ] && echo "Skipping build." || (docker_build)
+
+            if [ -n "$DRY_RUN" ]; then
+                echo "Running in dry run mode. Exiting."
+                exit 0
+            fi
+
+            [ -n "$SKIP_PUSH" ] && echo "Skipping push." || (docker_login; docker_push)
+            [ -n "$SKIP_MANIFEST" ] && echo "Skipping manifest." || (docker_login; docker_manifest)
+
+- scm:
+    name: skydive-ci-github
+    scm:
+      - skydive-github:
+          name: "skydive-ci"
+          repository: "https://github.com/skydive-project/skydive-ci"
+          ref: "master"
+          refspec: "+refs/heads/*:refs/remotes/origin/*"
+
+- builder:
+    name: upload-binaries
+    builders:
+      - shell: |
+          if [ -z "$GITHUB_USERNAME" ] || [ -z "$GITHUB_TOKEN" ]
+          then
+              echo "The environment variables GITHUB_USERNAME and GITHUB_TOKEN need to be defined"
+              exit 1
+          fi
+
+          set -v
+          set -e
+
+          BUILD_TAG=$(date +%Y-%m-%d).$BUILD_NUMBER
+
+          dir="$(dirname "$0")"
+
+          cd /tmp
+          rm -rf skydive-binaries
+          git clone https://github.com/skydive-project/skydive-binaries.git
+          cd /tmp/skydive-binaries
+
+          git config --global user.email "builds@skydive.network"
+          git config --global user.name "Skydive CI"
+
+          add() {{
+              local dst=$1
+              local src=$2
+              cp $src $dst
+              git add $dst
+          }}
+
+          add_gz() {{
+              local dst=$1
+              local src=$2
+              gzip -c $src > $dst.gz
+              git add $dst.gz
+          }}
+
+          {add}
+
+          git commit -m "$BUILD_TAG Jenkins build" --amend --reset-author
+          git config credential.helper "store --file=.git/credentials"
+          echo "https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com" > .git/credentials
+
+          if [ -n "$DRY_RUN" ]; then
+              echo "Running in dry run mode. Exiting."
+              exit 0
+          fi
+
+          git push -f -q origin jenkins-builds
+

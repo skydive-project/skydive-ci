@@ -1,0 +1,70 @@
+- scm:
+    name: skydive-flow-exporter-scms
+    scm:
+      - skydive-github:
+          name: skydive-flow-exporter
+          repository: "${REPOSITORY}"
+          ref: "${REF}"
+          refspec: "${REFSPEC}"
+      - skydive-ci-github
+
+- defaults:
+    name: skydive-flow-exporter
+    project-type: freestyle
+    concurrent: true
+    parameters:
+      - skydive-parameters:
+          name: skydive-flow-exporter
+          repository: https://github.com/skydive-project/skydive-flow-exporter
+          ref: "${sha1}"
+          refspec: "+refs/pull/*:refs/remotes/origin/pr/*"
+          dry-run: "true"
+          keep-resources: ""
+      - skydive-labels:
+          slave-name: "slaves"
+    properties:
+      - github:
+          url: https://github.com/skydive-project/skydive-flow-exporter
+      - rebuild
+    scm:
+      - skydive-flow-exporter-scms
+    wrappers:
+      - skydive-wrappers
+    publishers:
+      - skydive-publishers
+
+- job:
+    name: skydive-flow-exporter-compile-tests
+    defaults: skydive-flow-exporter
+    triggers:
+      - skydive-pull-request:
+          name: flow-exporter-compile-tests
+          trigger-prefix: "(all )?"
+          only-trigger-phrase: false
+          cancel-builds-on-update: true
+    builders:
+      - golang-shell:
+          module: github.com/skydive-project/skydive-flow-exporter
+          test: GO111MODULE=on make
+
+- job:
+    name: skydive-flow-exporter-create-docker-image
+    defaults: skydive-flow-exporter
+    triggers:
+      - skydive-pull-request:
+          name:  flow-exporter-create-docker-image
+          trigger-prefix: "deliverable "
+          only-trigger-phrase: true
+          cancel-builds-on-update: true
+    builders:
+      - skydive-create-docker-image:
+          binary: allinone/allinone
+          build-command: GO111MODULE=on make
+          dockerfile: Dockerfile
+          image: skydive/skydive-flow-exporter
+          image-snapshot: skydive/skydive-flow-exporter-snapshot
+          module: github.com/skydive-project/skydive-flow-exporter
+    wrappers:
+      - docker-credentials
+      - skydive-wrappers
+

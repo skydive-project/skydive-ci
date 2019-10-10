@@ -1,0 +1,41 @@
+- defaults:
+    name: skydive-collectd-plugin
+    project-type: freestyle
+    concurrent: true
+    parameters:
+      - skydive-parameters:
+          name: skydive-collectd-plugin
+          repository: https://github.com/skydive-project/skydive-collectd-plugin
+          ref: "${sha1}"
+          refspec: "+refs/pull/*:refs/remotes/origin/pr/*"
+          dry-run: "true"
+          keep-resources: ""
+      - skydive-labels:
+          slave-name: "slaves"
+    properties:
+      - github:
+          url: https://github.com/skydive-project/skydive-collectd-plugin
+    scm:
+      - skydive-github:
+          name: skydive-collectd-plugin
+          repository: "${REPOSITORY}"
+          ref: "${REF}"
+          refspec: "${REFSPEC}"
+    wrappers:
+      - skydive-wrappers
+    publishers:
+      - skydive-publishers
+
+- job:
+    name: skydive-collectd-plugin-compile-tests
+    defaults: skydive-collectd-plugin
+    triggers:
+      - skydive-pull-request:
+          name: collectd-compile-tests
+          trigger-prefix: "(all )?"
+          only-trigger-phrase: false
+          cancel-builds-on-update: true
+    builders:
+      - golang-shell:
+          module: github.com/skydive-project/skydive-collectd-plugin
+          test: COLLECTD_SRC=/tmp/collectd make

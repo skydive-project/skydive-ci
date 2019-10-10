@@ -63,6 +63,7 @@
         - envinject
         - nodelabelparameter
         - slack
+        - multiple-scms
 
 - name: Install requirements
   hosts: slaves
