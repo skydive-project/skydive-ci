@@ -108,8 +108,6 @@
 - wrapper:
     name: skydive-wrappers
     wrappers:
-      - ansicolor:
-          colormap: gnome-terminal
       - timeout:
           timeout: 300
           fail: true
