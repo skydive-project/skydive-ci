@@ -45,7 +45,7 @@
     builders:
       - golang-shell:
           module: github.com/skydive-project/skydive-flow-exporter
-          test: GO111MODULE=on make
+          test: make
 
 - job:
     name: skydive-flow-exporter-create-docker-image

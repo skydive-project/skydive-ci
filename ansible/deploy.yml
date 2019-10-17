@@ -257,7 +257,7 @@
       owner: root
       group: root
   - shell: systemctl daemon-reload
-  - shell: vagrant plugin install vagrant-openstack-provider
+  - shell: vagrant plugin install vagrant-libvirt
     become: yes
     become_user: jenkins
   - file:
