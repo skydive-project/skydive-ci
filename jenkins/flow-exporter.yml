@@ -48,6 +48,20 @@
           test: make
 
 - job:
+    name: skydive-flow-exporter-unit-tests
+    defaults: skydive-flow-exporter
+    triggers:
+      - skydive-pull-request:
+          name: flow-exporter-unit-tests
+          trigger-prefix: "(all )?"
+          only-trigger-phrase: false
+          cancel-builds-on-update: true
+    builders:
+      - golang-shell:
+          module: github.com/skydive-project/skydive-flow-exporter
+          test: make test
+
+- job:
     name: skydive-flow-exporter-create-docker-image
     defaults: skydive-flow-exporter
     triggers:
