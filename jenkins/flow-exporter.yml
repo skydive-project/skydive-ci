@@ -73,7 +73,7 @@
     builders:
       - skydive-create-docker-image:
           binary: allinone/allinone
-          build-command: GO111MODULE=on make
+          build-command: GO111MODULE=on make build
           dockerfile: Dockerfile
           image: skydive/skydive-flow-exporter
           image-snapshot: skydive/skydive-flow-exporter-snapshot
