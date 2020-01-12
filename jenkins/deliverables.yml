@@ -120,7 +120,7 @@
       - golang-shell:
           module: github.com/skydive-project/skydive-flow-exporter
           test: |
-            make
+            make build
       - upload-binaries:
           add: |
             add_gz skydive-latest $WORKSPACE/bin/skydive
