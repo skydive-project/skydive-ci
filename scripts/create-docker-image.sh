@@ -4,6 +4,8 @@ set -v
 set -x
 set -e
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
 # Arches are the docker arch names
 : ${ARCHES:=amd64 ppc64le s390x}
 : ${DOCKER_IMAGE:=skydive/skydive}
@@ -12,13 +14,11 @@ set -e
 : ${DOCKER_BINARY:=skydive}
 : ${DOCKER_BUILD_COMMAND:=}
 : ${DOCKERFILE:=contrib/docker/Dockerfile}
-: ${REF:=latest}
+: ${REF:=master}
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 TAG=${REF##*/}
 VERSION=${TAG#v}
-
-[ -n "$VERSION" ] && DOCKER_TAG=$VERSION || DOCKER_TAG=latest
+[ "$VERSION" = master ] && DOCKER_TAG=latest || DOCKER_TAG=$VERSION
 
 # See if a server forms part of DOCKER_IMAGE, e.g. DOCKER_IMAGE=registry.ng.bluemix.net:8080/skydive/skydive
 if [ "${DOCKER_IMAGE%/*/*}" != "${DOCKER_IMAGE}" ]; then
@@ -118,7 +118,7 @@ docker_skydive_target() {
         --build-arg ARCH=$arch \
         ${BASE:+--build-arg BASE=${BASE}} \
         -f $dockerfile $( dirname ${dockerfile} )
-    if [ "$VERSION" = latest ]; then
+    if [ "$VERSION" = master ]; then
         local image_snapshot=$( docker_image_snapshot ${arch} )
         docker tag $image $image_snapshot
     fi
@@ -193,7 +193,7 @@ docker_push() {
     for arch in $ARCHES
     do
         docker push $( docker_image ${arch} )
-        if [ "$VERSION" = latest ]; then
+        if [ "$VERSION" = master ]; then
             docker push $( docker_image_snapshot ${arch} )
         fi
     done
@@ -228,7 +228,7 @@ docker_manifest_create_and_push() {
 
 docker_manifest() {
     docker_manifest_create_and_push ${DOCKER_IMAGE}:${DOCKER_TAG}
-    if [ "$VERSION" = latest ]; then
+    if [ "$VERSION" = master ]; then
         docker_manifest_create_and_push ${DOCKER_IMAGE_SNAPSHOT}:${DOCKER_TAG_SNAPSHOT}
     fi
 }
