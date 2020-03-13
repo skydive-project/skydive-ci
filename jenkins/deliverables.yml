@@ -73,10 +73,6 @@
               current-parameters: true
             - name: skydive-create-docker-image
               current-parameters: true
-              git-revision: true
-            - name: skydive-create-vagrant-boxes
-              current-parameters: true
-              git-revision: true
             - name: skydive-flow-exporter-create-docker-image
               predefined-parameters: |
                 REF=refs/heads/master
