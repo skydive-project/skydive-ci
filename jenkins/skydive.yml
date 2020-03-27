@@ -509,6 +509,7 @@
 
 - job:
     name: skydive-functional-hw-tests
+    disabled: true
     defaults: skydive
     parameters:
       - skydive-default-parameters
