@@ -1,0 +1,50 @@
+- defaults:
+    name: skydive-operator
+    project-type: freestyle
+    concurrent: true
+    parameters:
+      - skydive-parameters:
+          name: skydive-operator
+          repository: https://github.com/skydive-project/skydive-operator
+          ref: "${sha1}"
+          refspec: "+refs/pull/*:refs/remotes/origin/pr/*"
+          dry-run: "true"
+          keep-resources: ""
+      - skydive-labels:
+          slave-name: baremetal
+    properties:
+      - github:
+          url: https://github.com/skydive-project/skydive-operator
+      - inject:
+          properties-content: MINIKUBE_DRIVER=virtualbox
+    scm:
+      - skydive-github:
+          name: skydive-operator
+          repository: "${REPOSITORY}"
+          ref: "${REF}"
+          refspec: "${REFSPEC}"
+      - skydive-ci-github:
+    wrappers:
+      - skydive-wrappers
+    publishers:
+      - skydive-publishers
+
+- job:
+    name: skydive-operator-tests
+    defaults: skydive-operator
+    triggers:
+      - skydive-pull-request:
+          name: operator-tests
+          trigger-prefix: "all "
+          cancel-builds-on-update: true
+          only-trigger-phrase: false
+    builders:
+      - ci-script:
+          script: . scripts/install-minikube.sh start
+      - golang-shell:
+          module: github.com/skydive-project/skydive-operator
+          test: tests/run-tests.sh
+      - ci-script:
+          script: . scripts/install-minikube.sh stop
+    publishers:
+      - skydive-publishers

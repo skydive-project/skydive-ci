@@ -133,10 +133,10 @@
     builders:
       - shell: |
           #!/bin/bash
-          cd src/github.com/skydive-project/skydive
-          [ -d /var/tmp/skydive-cleanup ] || sudo scripts/ci/cleanup.sh init
-          sudo scripts/ci/cleanup.sh snapshot
-          sudo scripts/ci/cleanup.sh cleanup
+          cd src/github.com/skydive-project/skydive-ci
+          [ -d /var/tmp/skydive-cleanup ] || sudo scripts/cleanup.sh init
+          sudo scripts/cleanup.sh snapshot
+          sudo scripts/cleanup.sh cleanup
 
 - builder:
     name: golang-shell
@@ -180,6 +180,14 @@
             [[ "$ghprbPullLongDescription" = *"pattern="* ]] && export TEST_PATTERN=`expr match "$ghprbPullLongDescription" '^.*pattern=\(.*\)$'`
             [[ "$ghprbCommentBody" = *"pattern="* ]] && export TEST_PATTERN=`expr match "$ghprbCommentBody" '^.*pattern=\(.*\)$'`
             {test}
+
+- builder:
+    name: ci-script
+    builders:
+      - shell: |
+          set -v
+          cd src/github.com/skydive-project/skydive-ci
+          {script}
 
 - parameter:
     name: skydive-parameters
