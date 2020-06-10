@@ -117,36 +117,6 @@
       - skydive-publishers
 
 - job:
-    name: skydive-helm-tests
-    defaults: skydive
-    parameters:
-      - skydive-default-parameters
-      - skydive-labels:
-          slave-name: baremetal
-    concurrent: true
-    triggers:
-      - skydive-pull-request:
-          name: helm-tests
-          trigger-prefix: "all "
-          cancel-builds-on-update: true
-          only-trigger-phrase: true
-    builders:
-      - ci-script:
-          script: |
-            . scripts/install-minikube.sh start
-            . scripts/install-helm.sh start
-      - skydive-test:
-          test: scripts/ci/run-helm-tests.sh
-      - ci-script:
-          script: |
-            [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-helm.sh stop
-            [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-minikube.sh stop
-    publishers:
-      - junit:
-          results: tests.xml
-      - skydive-publishers
-
-- job:
     name: skydive-opencontrail-tests
     defaults: skydive
     parameters:
