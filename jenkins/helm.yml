@@ -41,14 +41,18 @@
     builders:
       - ci-script:
           script: |
+            . scripts/install-minikube.sh stop
+            . scripts/install-minikube.sh install
             . scripts/install-minikube.sh start
+            . scripts/install-helm.sh install
             . scripts/install-helm.sh start
+            . scripts/install-helm.sh status
       - golang-shell:
           module: github.com/skydive-project/skydive-helm
           test: tests/run-tests.sh
-      - ci-script:
-          script: |
-            [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-helm.sh stop
-            [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-minikube.sh stop
     publishers:
       - skydive-publishers
+      - post-tasks:
+          - script: |
+              [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-helm.sh stop || true
+              [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-minikube.sh stop

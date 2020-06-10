@@ -107,14 +107,13 @@
             . scripts/install-istio.sh start
       - skydive-test:
           test: BACKEND=elasticsearch scripts/ci/run-istio-tests.sh
-      - ci-script:
-          script: |
-            . scripts/install-istio.sh stop
-            . scripts/install-minikube.sh stop
     publishers:
       - junit:
           results: tests.xml
       - skydive-publishers
+      - post-tasks:
+          - script: |
+              [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-minikube.sh stop
 
 - job:
     name: skydive-opencontrail-tests

@@ -6,7 +6,7 @@ OS=linux
 ARCH=amd64
 TARGET_DIR=/usr/bin
 
-MINIKUBE_VERSION="v1.1.1"
+MINIKUBE_VERSION="v1.11.0"
 MINIKUBE_URL="https://github.com/kubernetes/minikube/releases/download/$MINIKUBE_VERSION/minikube-$OS-$ARCH"
 
 K8S_VERSION="v1.14.3"
@@ -77,7 +77,7 @@ uninstall() {
 stop() {
         check_minikube
 
-        minikube delete || true
+        minikube delete --purge=true || true
         sudo rm -rf $HOME/.minikube $HOME/.kube
         sudo rm -rf /root/.minikube /root/.kube
 
@@ -99,9 +99,8 @@ stop() {
 start() {
         check_minikube
 
-        local args="--kubernetes-version $K8S_VERSION --memory 4096"
+        local args="--kubernetes-version $K8S_VERSION --memory 4096 --vm-driver=$MINIKUBE_DRIVER"
         if [ "$MINIKUBE_DRIVER" == "none" ]; then
-                args="$args --vm-driver=none"
                 local driver=$(sudo docker info --format '{{print .CgroupDriver}}')
                 if [ -n "$driver" ]; then
                         args="$args --extra-config=kubelet.cgroup-driver=$driver"

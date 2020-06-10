@@ -44,7 +44,8 @@
       - golang-shell:
           module: github.com/skydive-project/skydive-operator
           test: tests/run-tests.sh
-      - ci-script:
-          script: . scripts/install-minikube.sh stop
     publishers:
       - skydive-publishers
+      - post-tasks:
+          - script: |
+              [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-minikube.sh stop
