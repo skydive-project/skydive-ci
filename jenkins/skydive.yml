@@ -9,6 +9,16 @@
           dry-run: "true"
           keep-resources: ""
 
+- builder:
+    name: skydive-cleanup
+    builders:
+      - shell: |
+          #!/bin/bash
+          cd src/github.com/skydive-project/skydive
+          [ -d /var/tmp/skydive-cleanup ] || sudo scripts/ci/cleanup.sh init
+          sudo scripts/ci/cleanup.sh snapshot
+          sudo scripts/ci/cleanup.sh cleanup
+
 - defaults:
     name: skydive
     project-type: freestyle
@@ -184,6 +194,10 @@
       - skydive-cleanup
       - skydive-test:
           test: FLOW_PROTOCOL=websocket scripts/ci/run-scale.sh
+    publishers:
+      - post-tasks:
+          - script: |
+              SKYDIVE=skydive "src/github.com/skydive-project/skydive/scripts/scale.sh" stop 2 4 2
 
 - job:
     name: skydive-cdd-overview-tests

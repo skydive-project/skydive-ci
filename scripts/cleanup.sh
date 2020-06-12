@@ -42,8 +42,6 @@ function cleanup() {
   cleanup_items docker-volumes "docker_volume_rm"
   cleanup_items lxd "lxc delete --force"
 
-  SKYDIVE=skydive "${CURDIR}/../scale.sh" stop 2 4 2
-
   # clean elasticsearch
   curl -X DELETE 'http://localhost:9200/skydive*'
 

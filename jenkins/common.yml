@@ -129,16 +129,6 @@
           notify-every-failure: true
 
 - builder:
-    name: skydive-cleanup
-    builders:
-      - shell: |
-          #!/bin/bash
-          cd src/github.com/skydive-project/skydive-ci
-          [ -d /var/tmp/skydive-cleanup ] || sudo scripts/cleanup.sh init
-          sudo scripts/cleanup.sh snapshot
-          sudo scripts/cleanup.sh cleanup
-
-- builder:
     name: golang-shell
     builders:
       - shell: |
