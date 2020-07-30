@@ -29,12 +29,6 @@ case "$MINIKUBE_DRIVER" in
                 minikube() { sudo -E minikube $@; }
                 kubectl() { sudo -E kubectl $@; }
                 ;;
-        "virtualbox")
-                ;;
-        *)
-                echo "don't support MINIKUBE_DRIVER value '$MINIKUBE_DRIVER'"
-                exit 1
-                ;;
 esac
 
 uninstall_binary() {
