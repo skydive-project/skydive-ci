@@ -9,7 +9,7 @@ TARGET_DIR=/usr/bin
 MINIKUBE_VERSION="v1.11.0"
 MINIKUBE_URL="https://github.com/kubernetes/minikube/releases/download/$MINIKUBE_VERSION/minikube-$OS-$ARCH"
 
-K8S_VERSION="v1.14.3"
+K8S_VERSION="v1.15.12"
 KUBECTL_URL="https://storage.googleapis.com/kubernetes-release/release/$K8S_VERSION/bin/$OS/$ARCH/kubectl"
 
 [ -z "$WITH_CALICO" ] && WITH_CALICO=false
