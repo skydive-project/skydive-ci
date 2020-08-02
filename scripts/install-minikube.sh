@@ -79,7 +79,6 @@ stop() {
                 sudo rm -rf /etc/kubernetes
                 sudo rm -rf /var/lib/localkube
 
-                sudo docker system prune -af || true
                 for i in $(sudo docker ps -aq --filter name=k8s || true); do
                         sudo docker stop $i || true
                         sudo docker rm $i || true

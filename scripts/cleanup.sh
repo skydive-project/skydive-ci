@@ -15,10 +15,12 @@ function cleanup_items() {
 }
 
 function docker_rm() {
-  local container=$1
-  docker stop $container
+  local id=$1
+  local name=$2
+
+  docker stop $id
   for i in $( seq 5 ); do
-    docker rm -f $container && break || sleep 1
+    docker rm -f $id && break || sleep 1
   done
 }
 
@@ -97,7 +99,7 @@ function snapshot() {
   snapshot_items netns $ext "ip netns | awk '{print \$1}'"
   snapshot_items intf $ext "ip -o link show | grep -v tun99 | grep -v virbr | awk -F': ' '{print \$2}' | cut -d '@' -f 1"
   snapshot_items ovsdb $ext "ovs-vsctl list-br"
-  snapshot_items docker $ext "docker ps -a -q"
+  snapshot_items docker $ext "docker ps -a --format '{{.ID}} {{.Names}} {{.Image}}'"
   snapshot_items docker-volumes $ext "docker volume ls | grep -v mod | grep -v go-build | awk '{print \$2}'"
   snapshot_items lxd $ext "lxc list --format csv -c n"
 }
