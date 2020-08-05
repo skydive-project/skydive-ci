@@ -14,10 +14,10 @@
     builders:
       - shell: |
           #!/bin/bash
-          cd src/github.com/skydive-project/skydive
-          [ -d /var/tmp/skydive-cleanup ] || sudo scripts/ci/cleanup.sh init
-          sudo scripts/ci/cleanup.sh snapshot
-          sudo scripts/ci/cleanup.sh cleanup
+          cd src/github.com/skydive-project/skydive-ci
+          [ -d /var/tmp/skydive-cleanup ] || sudo scripts/cleanup.sh init
+          sudo scripts/cleanup.sh snapshot
+          sudo scripts/cleanup.sh cleanup
 
 - defaults:
     name: skydive
