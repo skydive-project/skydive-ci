@@ -301,3 +301,12 @@
 
           git push -f -q origin jenkins-builds
 
+- publisher:
+    name: skydive-post-script
+    publishers:
+      - post-tasks:
+          - matches:
+              - log-text: .*
+                operator: AND
+            script: |
+              {script}
