@@ -10,6 +10,7 @@
           per-build-tag: false
           skip-tag: true
           refspec: "{refspec}"
+          shallow-clone: true
           branches:
             - "{ref}"
 
