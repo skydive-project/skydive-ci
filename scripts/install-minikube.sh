@@ -92,7 +92,7 @@ stop() {
 start() {
         check_minikube
 
-        local args="--kubernetes-version $K8S_VERSION --memory 4096 --vm-driver=$MINIKUBE_DRIVER"
+        local args="--kubernetes-version $K8S_VERSION --memory 4096 --vm-driver=$MINIKUBE_DRIVER --alsologtostderr"
         if [ "$MINIKUBE_DRIVER" == "none" ]; then
                 local driver=$(sudo docker info --format '{{print .CgroupDriver}}')
                 if [ -n "$driver" ]; then
