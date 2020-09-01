@@ -6,7 +6,7 @@ OS=linux
 ARCH=amd64
 TARGET_DIR=/usr/bin
 
-MINIKUBE_VERSION="v1.11.0"
+MINIKUBE_VERSION="v1.12.0"
 MINIKUBE_URL="https://github.com/kubernetes/minikube/releases/download/$MINIKUBE_VERSION/minikube-$OS-$ARCH"
 
 K8S_VERSION="v1.15.12"
