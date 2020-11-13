@@ -71,7 +71,7 @@ uninstall() {
 stop() {
         check_minikube
 
-        minikube delete --purge=true || true
+        minikube delete || true
         sudo rm -rf $HOME/.minikube $HOME/.kube
         sudo rm -rf /root/.minikube /root/.kube
 
