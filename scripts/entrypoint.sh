@@ -7,9 +7,9 @@ echo `pwd`
 
 echo /gosu $UID env \
     HOME=/root \
-    GOROOT=/usr/lib/go-1.11 \
+    GOROOT=/usr/lib/go-1.14 \
     GOPATH=/root/go \
-    PATH=/usr/lib/go-1.11/bin:/root/go/bin:$PATH \
+    PATH=/usr/lib/go-1.14/bin:/root/go/bin:$PATH \
     ${TARGET_ARCH:+CC=${TARGET_ARCH}-linux-gnu-gcc} \
     ${TARGET_GOARCH:+GOARCH=${TARGET_GOARCH}} \
     CGO_ENABLED=1 \
@@ -17,9 +17,9 @@ echo /gosu $UID env \
 
 /gosu $UID env \
     HOME=/root \
-    GOROOT=/usr/lib/go-1.11 \
+    GOROOT=/usr/lib/go-1.14 \
     GOPATH=/root/go \
-    PATH=/usr/lib/go-1.11/bin:/root/go/bin:$PATH \
+    PATH=/usr/lib/go-1.14/bin:/root/go/bin:$PATH \
     ${TARGET_ARCH:+CC=${TARGET_ARCH}-linux-gnu-gcc} \
     ${TARGET_GOARCH:+GOARCH=${TARGET_GOARCH}} \
     CGO_ENABLED=1 \

@@ -1,4 +1,4 @@
-FROM ubuntu:19.04
+FROM ubuntu:20.04
 
 ARG TARGET_ARCH=s390x
 ARG TARGET_GOARCH=$TARGET_ARCH
@@ -14,10 +14,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y update \
     && apt-get -y install software-properties-common \
     && dpkg --add-architecture $DEBARCH \
-    && echo "deb [arch=$DEBARCH] http://ports.ubuntu.com/ubuntu-ports disco main universe" >> /etc/apt/sources.list \
-    && echo "deb [arch=$DEBARCH] http://ports.ubuntu.com/ubuntu-ports disco-updates main universe" >> /etc/apt/sources.list \
+    && echo "deb [arch=$DEBARCH] http://ports.ubuntu.com/ubuntu-ports focal main universe" >> /etc/apt/sources.list \
+    && echo "deb [arch=$DEBARCH] http://ports.ubuntu.com/ubuntu-ports focal-updates main universe" >> /etc/apt/sources.list \
     && apt-get -y update; \
-    apt-get -y install git bzr make flex bison wget unzip golang-1.11 npm libvirt-dev \
+    apt-get -y install git bzr make flex bison wget unzip golang-1.14 npm libvirt-dev \
                    zlib1g-dev:$DEBARCH \
                    liblzma-dev:$DEBARCH \
                    libc++-dev:$DEBARCH \
@@ -32,7 +32,7 @@ RUN apt-get -y update \
 RUN mkdir -p /root/go/bin && chmod a+wrx /root/go/bin
 
 RUN arch="$(dpkg --print-architecture)" \
-    && wget --no-verbose -O /gosu "https://github.com/tianon/gosu/releases/download/1.11/gosu-${arch##*-}" \
+    && wget --no-verbose -O /gosu "https://github.com/tianon/gosu/releases/download/1.12/gosu-${arch##*-}" \
     && chmod a+x /gosu
 
 ENV UID=$UID
