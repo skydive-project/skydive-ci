@@ -30,6 +30,7 @@ install_istio() {
         fi
 
         sudo cp -R $ISTIO_PKG $TARGET_DIR
+        sudo chmod -R 755 $TARGET_DIR
         sudo cp $ISTIOCTL /usr/bin/
         cd -
         rm -rf $tmpdir
@@ -39,8 +40,8 @@ install_istio() {
 check_istio() {
         which $ISTIOCTL 2>/dev/null
         if [ $? != 0 ]; then
-                echo "istioctl is not installed. Please run install-istio.sh install"
-                exit 1
+                echo "istioctl is not installed."
+                return 1
         fi
 }
 
@@ -61,10 +62,9 @@ stop() {
 
 start() {
         echo "Starting Istio"
-        check_istio
-        kubectl apply -f $ISTIO_OBJECTS
-        kubectl apply -f $ISTIO_DEMO
-        status
+        check_istio || install_istio
+        istioctl install --set profile=demo -y
+        kubectl label namespace default istio-injection=enabled
         kubectl -n $ISTIO_NS get services
         echo "Istio started"
 }
