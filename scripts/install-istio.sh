@@ -3,10 +3,11 @@
 DIR=$(dirname $0)
 
 OS=linux
+ARCH=amd64
 TARGET_DIR=/opt
 
-ISTIO_VERSION="1.0.1"
-ISTIO_URL="https://github.com/istio/istio/releases/download/$ISTIO_VERSION/istio-$ISTIO_VERSION-$OS.tar.gz"
+ISTIO_VERSION="1.6.13"
+ISTIO_URL="https://github.com/istio/istio/releases/download/$ISTIO_VERSION/istio-$ISTIO_VERSION-$OS-$ARCH.tar.gz"
 ISTIO_PKG="istio-$ISTIO_VERSION"
 ISTIO_OBJECTS="$TARGET_DIR/$ISTIO_PKG/install/kubernetes/helm/istio/templates/crds.yaml"
 ISTIO_DEMO="$TARGET_DIR/$ISTIO_PKG/install/kubernetes/istio-demo.yaml"
