@@ -40,7 +40,9 @@
           only-trigger-phrase: false
     builders:
       - ci-script:
-          script: . scripts/install-minikube.sh start
+          script: |
+            sudo systemctl restart libvirtd || true
+            . scripts/install-minikube.sh start
       - golang-shell:
           module: github.com/skydive-project/skydive-operator
           test: tests/run-tests.sh

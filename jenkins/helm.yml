@@ -41,6 +41,7 @@
     builders:
       - ci-script:
           script: |
+            sudo systemctl restart libvirtd || true
             . scripts/install-minikube.sh stop
             . scripts/install-minikube.sh install
             . scripts/install-minikube.sh start

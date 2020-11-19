@@ -113,6 +113,7 @@
       - skydive-cleanup
       - ci-script:
           script: |
+            sudo systemctl restart libvirtd || true
             . scripts/install-minikube.sh start
             . scripts/install-istio.sh start
       - skydive-test:

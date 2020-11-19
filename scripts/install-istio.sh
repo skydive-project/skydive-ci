@@ -30,7 +30,7 @@ install_istio() {
         fi
 
         sudo cp -R $ISTIO_PKG $TARGET_DIR
-        sudo chmod -R 755 $TARGET_DIR
+        sudo chmod -R 755 $ISTIOCTL
         sudo cp $ISTIOCTL /usr/bin/
         cd -
         rm -rf $tmpdir
