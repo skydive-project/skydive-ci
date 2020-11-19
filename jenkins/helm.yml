@@ -16,7 +16,7 @@
       - github:
           url: https://github.com/skydive-project/skydive-helm
       - inject:
-          properties-content: MINIKUBE_DRIVER=virtualbox
+          properties-content: MINIKUBE_DRIVER=kvm2
     scm:
       - skydive-github:
           name: skydive-helm
