@@ -51,10 +51,10 @@ install_binary() {
 }
 
 check_minikube() {
-        which minikube 2>/dev/null
+        minikube version | grep $MINIKUBE_VERSION 2>/dev/null
         if [ $? != 0 ]; then
-                echo "minikube is not installed. Please run install-minikube.sh install"
-                exit 1
+                echo "minikube MINIKUBE_VERSION is not installed."
+                return 1
         fi
 }
 
@@ -90,7 +90,7 @@ stop() {
 }
 
 start() {
-        check_minikube
+        check_minikube || install
 
         local args="--kubernetes-version $K8S_VERSION --memory 4096 --vm-driver=$MINIKUBE_DRIVER --alsologtostderr"
         if [ "$MINIKUBE_DRIVER" == "none" ]; then
