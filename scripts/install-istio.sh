@@ -38,7 +38,7 @@ install_istio() {
 }
 
 check_istio() {
-        which $ISTIOCTL 2>/dev/null
+        which istioctl 2>/dev/null
         if [ $? != 0 ]; then
                 echo "istioctl is not installed."
                 return 1
