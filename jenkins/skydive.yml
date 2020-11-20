@@ -114,8 +114,7 @@
       - ci-script:
           script: |
             sudo systemctl restart libvirtd || true
-            . scripts/install-minikube.sh start
-            . scripts/install-istio.sh start
+            WITH_ISTIO=true . scripts/install-minikube.sh start
       - skydive-test:
           test: BACKEND=elasticsearch scripts/ci/run-istio-tests.sh
     publishers:

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR="$(dirname "$0")"
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 OS=linux
 ARCH=amd64
@@ -13,6 +13,7 @@ K8S_VERSION="v1.15.12"
 KUBECTL_URL="https://storage.googleapis.com/kubernetes-release/release/$K8S_VERSION/bin/$OS/$ARCH/kubectl"
 
 [ -z "$WITH_CALICO" ] && WITH_CALICO=false
+[ -z "$WITH_ISTIO" ] && WITH_ISTIO=true
 
 CALICO_VERSION="v2.6"
 CALICO_URL="https://docs.projectcalico.org/$CALICO_VERSION/getting-started/kubernetes/installation/hosted/calico.yaml"
@@ -69,6 +70,10 @@ uninstall() {
 }
 
 stop() {
+        minikube stop
+}
+
+delete() {
         check_minikube
 
         minikube delete || true
@@ -120,7 +125,9 @@ start() {
                 sudo cp -ar $HOME/$i /root/$i
         done
 
-	$WITH_CALICO && kubectl apply -f $CALICO_URL
+        $WITH_CALICO && kubectl apply -f $CALICO_URL
+
+        $WITH_ISTIO && $DIR/install-istio.sh start
 
         kubectl get services kubernetes
         kubectl get pods -n kube-system
@@ -144,6 +151,9 @@ case "$1" in
                 ;;
         stop)
                 stop
+                ;;
+        delete)
+                delete
                 ;;
         status)
                 status
