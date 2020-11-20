@@ -122,8 +122,13 @@
           results: tests.xml
       - skydive-publishers
       - skydive-post-script:
+          only-if-successful: true
           script: |
             [ "$KEEP_RESOURCES" = "true" ] || . src/github.com/skydive-project/skydive-ci/scripts/install-minikube.sh stop
+      - skydive-post-script:
+          only-if-successful: false
+          script: |
+            [ "$KEEP_RESOURCES" = "true" ] || . src/github.com/skydive-project/skydive-ci/scripts/install-minikube.sh delete
 
 - job:
     name: skydive-opencontrail-tests
@@ -196,6 +201,7 @@
           test: FLOW_PROTOCOL=websocket scripts/ci/run-scale.sh
     publishers:
       - skydive-post-script:
+          only-if-successful: false
           script: |
             SKYDIVE=skydive "src/github.com/skydive-project/skydive/scripts/scale.sh" stop 2 4 2
 

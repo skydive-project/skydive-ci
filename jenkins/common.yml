@@ -307,5 +307,6 @@
           - matches:
               - log-text: .*
                 operator: AND
+            run-if-job-successful: "{only-if-successful}"
             script: |
               {script}

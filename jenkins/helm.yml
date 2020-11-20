@@ -54,6 +54,7 @@
     publishers:
       - skydive-publishers
       - skydive-post-script:
+          only-if-successful: false
           script: |
             [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-helm.sh stop || true
             [ "$KEEP_RESOURCES" = "true" ] || . scripts/install-minikube.sh stop
