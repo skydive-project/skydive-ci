@@ -23,16 +23,8 @@
           projects:
             - name: skydive-create-docker-image
               current-parameters: true
-              git-revision: true
             - name: skydive-flow-exporter-create-docker-image
               current-parameters: true
-              git-revision: true
-            - name: skydive-build-copr
-              current-parameters: true
-              git-revision: true
-            - name: skydive-create-vagrant-boxes
-              current-parameters: true
-              git-revision: true
       - multijob:
           name: skydive-create-release
           condition: SUCCESSFUL
@@ -72,9 +64,7 @@
             - name: skydive-create-docker-image
               current-parameters: true
             - name: skydive-flow-exporter-create-docker-image
-              predefined-parameters: |
-                REF=refs/heads/master
-                REFSPEC=+refs/heads/*:refs/remotes/origin/*
+              current-parameters: true
     publishers:
       - skydive-publishers
       - email:
