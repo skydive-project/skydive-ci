@@ -16,8 +16,6 @@
           repository: "https://github.com/skydive-project/skydive"
           ref: ""
           refspec: "+refs/tags/*:refs/remotes/origin/tags/*"
-    triggers:
-      - skydive-github-trigger
     builders:
       - multijob:
           name: skydive-create-deliverables
