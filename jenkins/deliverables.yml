@@ -23,15 +23,12 @@
           projects:
             - name: skydive-create-docker-image
               current-parameters: true
-            - name: skydive-flow-exporter-create-docker-image
-              current-parameters: true
       - multijob:
           name: skydive-create-release
           condition: SUCCESSFUL
           projects:
             - name: skydive-release
               current-parameters: true
-              git-revision: true
 
 - job:
     name: skydive-create-deliverables-trunk
@@ -62,8 +59,6 @@
             - name: skydive-create-binaries
               current-parameters: true
             - name: skydive-create-docker-image
-              current-parameters: true
-            - name: skydive-flow-exporter-create-docker-image
               current-parameters: true
     publishers:
       - skydive-publishers
