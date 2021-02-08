@@ -10,12 +10,6 @@
           refspec: "+refs/tags/*:refs/remotes/origin/tags/*"
           dry-run: ""
           keep-resources: ""
-    scm:
-      - skydive-github:
-          name: skydive
-          repository: "https://github.com/skydive-project/skydive"
-          ref: ""
-          refspec: "+refs/tags/*:refs/remotes/origin/tags/*"
     builders:
       - multijob:
           name: skydive-create-deliverables
@@ -42,13 +36,6 @@
           refspec: "+refs/heads/*:refs/remotes/origin/*"
           dry-run: ""
           keep-resources: ""
-    scm:
-      - skydive-github:
-          name: skydive
-          repository: "https://github.com/skydive-project/skydive"
-          ref: "refs/heads/master"
-          refspec: "+refs/heads/*:refs/remotes/origin/*"
-      - skydive-ci-github
     triggers:
       - timed: "@midnight"
     builders:
@@ -84,11 +71,13 @@
           repository: "https://github.com/skydive-project/skydive"
           ref: "refs/heads/master"
           refspec: "+refs/heads/*:refs/remotes/origin/*"
+          shallow-clone: false
       - skydive-github:
           name: skydive-flow-exporter
           repository: "https://github.com/skydive-project/skydive-flow-exporter"
           ref: "refs/heads/master"
           refspec: "+refs/heads/*:refs/remotes/origin/*"
+          shallow-clone: true
     builders:
       - golang-shell:
           module: github.com/skydive-project/skydive

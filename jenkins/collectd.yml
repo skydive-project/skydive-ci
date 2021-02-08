@@ -21,6 +21,7 @@
           repository: "${REPOSITORY}"
           ref: "${REF}"
           refspec: "${REFSPEC}"
+          shallow-clone: true
     wrappers:
       - skydive-wrappers
     publishers:

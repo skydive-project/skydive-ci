@@ -23,6 +23,7 @@
           repository: "${REPOSITORY}"
           ref: "${REF}"
           refspec: "${REFSPEC}"
+          shallow-clone: false
       - skydive-ci-github:
     wrappers:
       - skydive-wrappers

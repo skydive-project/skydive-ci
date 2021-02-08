@@ -6,6 +6,7 @@
           repository: "${REPOSITORY}"
           ref: "${REF}"
           refspec: "${REFSPEC}"
+          shallow-clone: true
       - skydive-ci-github
 
 - defaults:

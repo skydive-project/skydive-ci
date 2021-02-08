@@ -10,7 +10,7 @@
           per-build-tag: false
           skip-tag: true
           refspec: "{refspec}"
-          shallow-clone: true
+          shallow-clone: "{shallow-clone}"
           branches:
             - "{ref}"
 
@@ -246,6 +246,7 @@
           repository: "https://github.com/skydive-project/skydive-ci"
           ref: "master"
           refspec: "+refs/heads/*:refs/remotes/origin/*"
+          shallow-clone: true
 
 - builder:
     name: upload-binaries
