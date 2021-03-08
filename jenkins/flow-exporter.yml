@@ -71,7 +71,6 @@
           trigger-prefix: "deliverable "
           only-trigger-phrase: true
           cancel-builds-on-update: true
-      - timed: "@midnight"
     builders:
       - skydive-create-docker-image:
           binary: allinone/allinone
