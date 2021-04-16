@@ -26,7 +26,7 @@
     parameters:
       - skydive-default-parameters
       - skydive-labels:
-          slave-name: "slaves"
+          slave-name: slaves
     properties:
       - github:
           url: https://github.com/skydive-project/skydive

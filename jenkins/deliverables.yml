@@ -10,6 +10,8 @@
           refspec: "+refs/tags/*:refs/remotes/origin/tags/*"
           dry-run: ""
           keep-resources: ""
+      - skydive-labels:
+          slave-name: master
     builders:
       - multijob:
           name: skydive-create-deliverables
@@ -17,12 +19,16 @@
           projects:
             - name: skydive-create-docker-image
               current-parameters: true
+              predefined-parameters: |
+                SLAVE_NAME: slaves
       - multijob:
           name: skydive-create-release
           condition: SUCCESSFUL
           projects:
             - name: skydive-release
               current-parameters: true
+              predefined-parameters: |
+                SLAVE_NAME: slaves
 
 - job:
     name: skydive-create-deliverables-trunk
@@ -36,6 +42,8 @@
           refspec: "+refs/heads/*:refs/remotes/origin/*"
           dry-run: ""
           keep-resources: ""
+      - skydive-labels:
+          slave-name: master
     triggers:
       - timed: "@midnight"
     builders:
@@ -45,10 +53,17 @@
           projects:
             - name: skydive-create-binaries
               current-parameters: true
+              predefined-parameters: |
+                SLAVE_NAME: slaves
             - name: skydive-create-docker-image
               current-parameters: true
+              predefined-parameters: |
+                SLAVE_NAME: slaves
             - name: skydive-flow-exporter-create-docker-image
               current-parameters: true
+              predefined-parameters: |
+                REPOSITORY: https://github.com/skydive-project/skydive-flow-exporter
+                SLAVE_NAME: slaves
     publishers:
       - skydive-publishers
       - email:
