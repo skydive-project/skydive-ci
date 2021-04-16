@@ -70,6 +70,8 @@
         - nodelabelparameter
         - slack
         - multiple-scms
+        - rebuild
+        - ws-cleanup
 
 - name: Install requirements
   hosts: slaves
