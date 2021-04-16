@@ -115,8 +115,14 @@
           type: absolute
       - timestamps
       - github-pull-request:
-          status-url: http://ci-logs.skydive.network/logs/${JOB_NAME}/${BUILD_NUMBER}
+          status-url: http://ci-logs.skydive.community/logs/${JOB_NAME}/${BUILD_NUMBER}
           status-context: ${JOB_NAME}
+      - workspace-cleanup:
+          include:
+            - "**/*"
+          dirmatch: true
+          external-deletion-command: "sudo rm -rf %s"
+
 
 - publisher:
     name: skydive-publishers

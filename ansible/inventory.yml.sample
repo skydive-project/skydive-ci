@@ -1,5 +1,3 @@
-localhost
-
 [jenkins_master]
 jenkins_master ansible_ssh_user=root ansible_ssh_host=123.123.123.31 public_ip=123.123.123.31 private_ip=123.123.123.31 groups=masters
 
