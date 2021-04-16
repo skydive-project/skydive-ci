@@ -27,7 +27,7 @@
   become: yes
   tasks:
   - package:
-      name: python
+      name: python3
       state: present
   - set_fact: ansible_python_interpreter="/usr/bin/python"
 
