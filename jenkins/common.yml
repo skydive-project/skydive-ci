@@ -152,7 +152,7 @@
           curl -sL -o ~/bin/gimme https://raw.githubusercontent.com/travis-ci/gimme/master/gimme
           chmod +x ~/bin/gimme
 
-          eval "$(gimme 1.14.x)"
+          eval "$(gimme 1.16.x)"
 
           export GOPATH=$WORKSPACE
           export PATH=$GOPATH/bin:/usr/local/bin:$PATH

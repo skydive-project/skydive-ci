@@ -90,6 +90,10 @@
     builders:
       - skydive-test:
           test: scripts/ci/run-compile-tests.sh
+    publishers:
+      - archive:
+          artifacts: 'bin/skydive'
+      - skydive-publishers
 
 - job:
     name: skydive-k8s-tests
@@ -162,7 +166,7 @@
           only-if-successful: false
           script: |
             echo $PATH | grep -q "$HOME/bin" || export PATH="$PATH:$HOME/bin"
-            eval "$(gimme 1.14.x)"
+            eval "$(gimme 1.16.x)"
             export GOPATH=$WORKSPACE
             [ "$KEEP_RESOURCES" = "true" ] || . src/github.com/skydive-project/skydive/scripts/ci/ovnkube-setup.sh delete
 
