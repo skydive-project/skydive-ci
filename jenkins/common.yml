@@ -220,7 +220,6 @@
           name: SLAVE_NAME
           default: "{slave-name}"
           description: "The node on which to run the job"
-          all-nodes: true
 
 - builder:
     name: skydive-create-docker-image
