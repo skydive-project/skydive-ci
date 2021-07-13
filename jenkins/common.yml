@@ -156,6 +156,7 @@
 
           export GOPATH=$WORKSPACE
           export PATH=$GOPATH/bin:/usr/local/bin:$PATH
+          go env -w GOFLAGS=-mod=mod
 
           # share compile cache
           mkdir -p $HOME/pkg
