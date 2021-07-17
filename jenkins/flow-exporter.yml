@@ -74,7 +74,7 @@
     builders:
       - skydive-create-docker-image:
           binary: allinone/allinone
-          build-command: make build
+          build-command: "go env -w GOFLAGS=-mod=mod && make build"
           dockerfile: Dockerfile
           image: skydive/skydive-flow-exporter
           image-snapshot: skydive/skydive-flow-exporter-snapshot
