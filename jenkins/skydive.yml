@@ -114,26 +114,23 @@
       - skydive-default-parameters
       - skydive-labels:
           slave-name: baremetal
+      - string:
+          name: K8S_PROVIDER
+          default: "kind"
+          description: Provider to use to install k8s
     builders:
       - skydive-cleanup
+      - bootstrap-k8s-environment
       - ci-script:
           script: |
-            sudo systemctl restart libvirtd || true
-            WITH_ISTIO=true . scripts/install-minikube.sh start
+            . scripts/istio.sh start
       - skydive-test:
-          test: BACKEND=elasticsearch scripts/ci/run-istio-tests.sh
+          test: BACKEND=elasticsearch KUBECONFIG=$HOME/.kube/config scripts/ci/run-istio-tests.sh
     publishers:
       - junit:
           results: tests.xml
+      - cleanup-k8s-environment
       - skydive-publishers
-      - skydive-post-script:
-          only-if-successful: true
-          script: |
-            [ "$KEEP_RESOURCES" = "true" ] || . src/github.com/skydive-project/skydive-ci/scripts/install-minikube.sh stop
-      - skydive-post-script:
-          only-if-successful: false
-          script: |
-            [ "$KEEP_RESOURCES" = "true" ] || . src/github.com/skydive-project/skydive-ci/scripts/install-minikube.sh delete
 
 - job:
     name: skydive-ovn-k8s-tests

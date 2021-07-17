@@ -186,6 +186,22 @@
           cd src/github.com/skydive-project/skydive-ci
           {script}
 
+- builder:
+    name: bootstrap-k8s-environment
+    builders:
+      - ci-script:
+          script: |
+            case "$K8S_PROVIDER" in
+              minikube)
+                scripts/minikube.sh install
+                scripts/minikube.sh start
+                ;;
+              *)
+                scripts/kind.sh install
+                scripts/kind.sh start
+                ;;
+            esac
+
 - parameter:
     name: skydive-parameters
     parameters:
@@ -318,3 +334,28 @@
             run-if-job-successful: "{only-if-successful}"
             script: |
               {script}
+
+- publisher:
+    name: cleanup-k8s-environment
+    publishers:
+      - post-tasks:
+          - matches:
+              - log-text: .*
+                operator: AND
+            run-if-job-successful: "{only-if-successful}"
+            script: |
+                set -v
+                cd src/github.com/skydive-project/skydive-ci
+
+                if [ "$KEEP_RESOURCES" != "true" ]
+                then
+                    case "$K8S_PROVIDER" in
+                        minikube)
+                            scripts/minikube.sh stop
+                        ;;
+                        *)
+                        scripts/kind.sh stop
+                        docker network rm kind || true
+                        ;;
+                    esac
+                fi

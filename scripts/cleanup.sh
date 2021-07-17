@@ -30,12 +30,14 @@ function docker_volume_rm() {
 
 function cleanup() {
   # cleanup minikube
-  "${CURDIR}/install-minikube.sh" stop
+  "${CURDIR}/minikube.sh" stop
 
   # cleanup podman/runc
   podman stop -a
   podman rm -fa
   podman rmi -fa
+
+  docker network rm kind
 
   cleanup_items netns "ip netns del"
   cleanup_items intf "ip link del"

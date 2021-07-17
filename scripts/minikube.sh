@@ -2,6 +2,8 @@
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+. $DIR/utils.sh
+
 OS=linux
 ARCH=amd64
 TARGET_DIR=/usr/bin
@@ -13,7 +15,6 @@ K8S_VERSION="v1.15.12"
 KUBECTL_URL="https://storage.googleapis.com/kubernetes-release/release/$K8S_VERSION/bin/$OS/$ARCH/kubectl"
 
 [ -z "$WITH_CALICO" ] && WITH_CALICO=false
-[ -z "$WITH_ISTIO" ] && WITH_ISTIO=true
 
 CALICO_VERSION="v2.6"
 CALICO_URL="https://docs.projectcalico.org/$CALICO_VERSION/getting-started/kubernetes/installation/hosted/calico.yaml"
@@ -31,25 +32,6 @@ case "$MINIKUBE_DRIVER" in
                 kubectl() { sudo -E kubectl $@; }
                 ;;
 esac
-
-uninstall_binary() {
-        local prog=$1
-        sudo rm -f $TARGET_DIR/$prog
-}
-
-install_binary() {
-        local prog=$1
-        local url=$2
-
-        wget --no-check-certificate -O $prog $url
-        if [ $? != 0 ]; then
-                echo "failed to download $url"
-                exit 1
-        fi
-
-        chmod a+x $prog
-        sudo mv $prog $TARGET_DIR/$prog
-}
 
 check_minikube() {
         minikube version | grep $MINIKUBE_VERSION 2>/dev/null
@@ -126,8 +108,6 @@ start() {
         done
 
         $WITH_CALICO && kubectl apply -f $CALICO_URL
-
-        $WITH_ISTIO && $DIR/install-istio.sh start
 
         kubectl get services kubernetes
         kubectl get pods -n kube-system
