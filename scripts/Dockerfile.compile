@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y update \
     && apt-get -y install software-properties-common \
     && apt-get -y update \
-    && apt-get -y install git bzr make flex bison wget unzip golang-1.16 libpcap0.8-dev npm protobuf-compiler \
+    && apt-get -y install git bzr make flex bison curl wget unzip golang-1.16 libpcap0.8-dev npm protobuf-compiler \
          clang llvm zlib1g-dev liblzma-dev libc++-dev libc-dev linux-libc-dev libxml2-dev libvirt-dev \
     && rm -rf /var/lib/apt/lists/*
 
