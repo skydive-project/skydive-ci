@@ -94,6 +94,7 @@ docker_skydive_builder() {
         --env GOPATH=$GOPATH_DIR \
         --env CC=$TARGET_ARCH-linux-gnu-gcc \
         --env GOARCH=$TARGET_GOARCH \
+	--env GOFLAGS=-mod=mod \
         --volume $TOPLEVEL_VOL:$TOPLEVEL_DIR \
         --volume $GOMOD_VOL:$GOMOD_DIR \
         --volume $GOBUILD_VOL:$GOBUILD_DIR \
