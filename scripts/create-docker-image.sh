@@ -7,7 +7,7 @@ set -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # Arches are the docker arch names
-: ${ARCHES:=amd64 ppc64le s390x}
+: ${ARCHES:=amd64 ppc64le}
 : ${DOCKER_IMAGE:=skydive/skydive}
 : ${DOCKER_IMAGE_SNAPSHOT:=skydive/snapshots}
 : ${DOCKER_USERNAME:=skydiveproject}
