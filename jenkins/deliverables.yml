@@ -100,7 +100,7 @@
           module: github.com/skydive-project/skydive
           test: |
             echo "--- BINARIES ---"
-            make LDFLAGS="-s -w" static WITH_EBPF=true
+            make LDFLAGS="-s -w" static WITH_EBPF=true WITH_OVN=true
             make swagger
       - golang-shell:
           module: github.com/skydive-project/skydive-flow-exporter

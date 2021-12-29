@@ -327,7 +327,7 @@
       - skydive-create-docker-image:
           binary: skydive
           build-command: |
-            make build WITH_OPENCONTRAIL=false WITH_EBPF=true WITH_EBPF_DOCKER_BUILDER=false
+            make build WITH_OPENCONTRAIL=false WITH_EBPF=true WITH_EBPF_DOCKER_BUILDER=false WITH_OVN=true
           dockerfile: contrib/docker/Dockerfile
           image: skydive/skydive
           image-snapshot: skydive/snapshot
