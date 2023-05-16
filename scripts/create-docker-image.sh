@@ -101,7 +101,7 @@ docker_skydive_builder() {
         $tag ${DOCKER_BUILD_COMMAND}
 
     # copy executable out of builder docker image
-    local src=${TOPLEVEL_DIR}/${DOCKER_BINARY}
+    local src=/root/go/bin/${DOCKER_BINARY}
     local dst=$( dirname ${DOCKERFILE} )/$( basename ${DOCKER_BINARY} ).$arch
     docker cp $image:$src $dst
 
